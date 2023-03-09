@@ -1,20 +1,16 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+I had been following various subject's experts blogs as a novice. There were NNTP clients and mailing lists that came with browsers. Then there were online readers. When beginning with full time work after freelancing, I began doing C++ development with BlackBerry 10 SDK Cascades derivative of Qt, and feed reading was amongst early app ideas. While developing for Windows later, I stumbled with issues of how resizing window affects content. I've been using that for vodcasts and podcasts nevertheless. For articles with images though, the publisher's hosting service's resizing trigger seemed to neglect blogging client, requiring to navigate to the item's link url. So here I am reimagining the experience to be browser based for regular blogs.
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
 1.	Installation process
+available via respective browser's extension store
 2.	Software dependencies
+web browser with add ons support at par with desktop web browsers
 3.	Latest releases
-4.	API references
+0.0.0.0 initial release
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+To be implemented
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+GitHub issues
