@@ -11,7 +11,11 @@ chrome.webNavigation.onCompleted.addListener(details => {
                     link => link.href)
             }).then(res => {
                 res.forEach(r => {
-                    if (null != r.result && 0 < r.result.length) console.log(r.result)
+                    if (null != r.result && 0 < r.result.length)
+                        chrome.action.getBadgeText({}).then(badge => {
+                            if ("" == badge)
+                                chrome.action.setBadgeText({ text: "New" })
+                        })
                 })
             })
     })

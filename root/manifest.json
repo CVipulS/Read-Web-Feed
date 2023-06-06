@@ -20,5 +20,6 @@
     "host_permissions": [
         "<all_urls>"
     ],
+    "action": {},
     "incognito": "not_allowed"
 }
