@@ -1,5 +1,5 @@
 {
-    "name": "Read Web Feed",
+    "name": "Read Web feed",
     "version": "0.0.0.0",
     "manifest_version": 3,
     "description": "browser XML syndication feed capability",
@@ -15,11 +15,15 @@
     "permissions": [
         "webNavigation",
         "tabs",
-        "scripting"
+        "scripting",
+        "sidePanel"
     ],
     "host_permissions": [
         "<all_urls>"
     ],
     "action": {},
+    "side_panel": {
+        "default_path": "sidepanel.xhtml"
+    },
     "incognito": "not_allowed"
 }
