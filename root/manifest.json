@@ -8,5 +8,17 @@
         "32": "icons/icon32x32.png",
         "48": "icons/icon48x48.png",
         "128": "icons/icon128x128.png"
-    }
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "webNavigation",
+        "tabs",
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "incognito": "not_allowed"
 }
