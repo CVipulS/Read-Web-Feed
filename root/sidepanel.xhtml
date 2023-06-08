@@ -1,22 +1,25 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
     <meta charset="utf-8" />
     <title>Read Web feed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        menu {
+            list-style-type: none
+        }
+    </style>
 </head>
 
 <body>
-    <ul id="newFeeds">
-        <li>Web feeds found in current session</li>
-    </ul>
-    <ul id="subscribed">
-        <li>Subscribed Web feeds</li>
-    </ul>
-    <ul id="discarded">
-        <li>Web feeds discarded earlier</li>
-    </ul>
+    <h2>New Web feed(s)</h2>
+    <menu id="newFeeds"></menu>
+    <h2>Subscribed Web feed(s)</h2>
+    <menu id="subscribed"></menu>
+    <h2>Discarded Web feed(s)</h2>
+    <menu id="discarded"></menu>
+    <script src="sidepanelscript.js"></script>
 </body>
 
 </html>
