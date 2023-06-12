@@ -5,19 +5,15 @@ function get_liMarkUp(myURL, myTitle) {
         + `<label>pull interval: <select><option value="1" selected="true">`
         + `Daily</option><option value="2">Weekly</option></select> </label><`
         + `label hidden="true">Weekday<input type="range" list="days" min="1" `
-        + `max="7"/></label><datalist id="days"><option value="1"></option><`
-        + `option value="2"></option><option value="3"></option><option value=`
-        + `"4"></option><option value="5"></option><option value="6"></option>`
-        + `<option value="7"></option></datalist><label><input type="number" `
-        + `min="1395" max="86400" value="61230" /> seconds</label><aside `
+        + `max="7"/></label><span></span><label><input type="number" min="1395`
+        + `" max="86400" value="61230" /> seconds</label><aside `
         + `contenteditable="true">${myURL}<br />${myTitle}</aside></details></`
         + `li>`
 }
 function pushFeeds(element_id, feeds) {
-    myFeeds = document.querySelector('#' + element_id)
-    feeds.forEach
-        (feed_entry => myFeeds.innerHTML += get_liMarkUp(feed_entry.href,
-            feed_entry.title))
+    let myFeeds = document.querySelector('#' + element_id)
+    feeds.forEach(feed_entry =>
+        myFeeds.innerHTML += get_liMarkUp(feed_entry.href, feed_entry.title))
 }
 port.onMessage.addListener(function (msg) {
     switch (msg.title) {
@@ -30,3 +26,18 @@ port.onMessage.addListener(function (msg) {
             port.postMessage({ title: "new feeds" })
     }
 });
+
+document.body.addEventListener('input', e => {
+    if ('select' != e.target.nodeName) return
+    e.target.parentElement.nextSibling.hidden = 1 != e.target.selectedIndex
+})
+
+document.body.addEventListener('change', e => {
+    if ('input' != e.target.nodeName) return
+    switch (e.target.type) {
+        case 'checkbox': break;
+        case 'range': e.target.parentElement.nextSibling.innerText = document.
+            body.querySelector("#days>option:nth-child(" + e.target.value + ")"
+            ).label + ' '
+    }
+})
