@@ -39,27 +39,26 @@ chrome.webNavigation.onCompleted.addListener(details => {
     })
 })
 chrome.runtime.onConnect.addListener(port => {
-    if (port.name === "sidepanel") {
-        myPort = port, port.onDisconnect.addListener(() => {
-            myPort = null
-            if (1 > newFeeds.length) chrome.action.setBadgeText({ text: "" })
-        })
-        port.onMessage.addListener(msg => {
-            switch (msg.title) {
-                case "new": MyOverlay(); discarded.unshift(newFeeds.pop())
-                    break
-                case "new feeds":
-                    discarded = newFeeds.concat(discarded)
-                    newFeeds = []
-            }
-        })
-        port.postMessage({
-            title: "discarded",
-            feeds: discarded
-        })
-        if (0 < newFeeds.length) port.postMessage({
-            title: "new feeds",
-            feeds: newFeeds
-        })
-    }
+    if ("sidepanel" != port.name) return
+    myPort = port, port.onDisconnect.addListener(() => {
+        myPort = null
+        if (1 > newFeeds.length) chrome.action.setBadgeText({ text: "" })
+    })
+    port.onMessage.addListener(msg => {
+        switch (msg.title) {
+            case "new": MyOverlay(); discarded.unshift(newFeeds.pop())
+                break
+            case "new feeds":
+                discarded = newFeeds.concat(discarded)
+                newFeeds = []
+        }
+    })
+    port.postMessage({
+        title: "discarded",
+        feeds: discarded
+    })
+    if (0 < newFeeds.length) port.postMessage({
+        title: "new feeds",
+        feeds: newFeeds
+    })
 })
