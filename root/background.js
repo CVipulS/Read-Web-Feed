@@ -46,11 +46,10 @@ chrome.runtime.onConnect.addListener(port => {
     })
     port.onMessage.addListener(msg => {
         switch (msg.title) {
-            case "new": MyOverlay(); discarded.unshift(newFeeds.pop())
-                break
+            case "new": MyOverlay(); discarded.unshift(newFeeds.pop()); break
             case "new feeds":
-                discarded = newFeeds.concat(discarded)
-                newFeeds = []
+                discarded = newFeeds.concat(discarded), newFeeds = []; break
+            case "subscription": case "discard": port.postMessage({ title: "updated" });
         }
     })
     port.postMessage({
