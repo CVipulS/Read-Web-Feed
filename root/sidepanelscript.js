@@ -1,17 +1,17 @@
 var port = chrome.runtime.connect({ name: "sidepanel" })
 port.onDisconnect.addListener(_ => window.close())
 
-let get_liMarkUp = (myURL, myTitle, myWaitInterval = 0, myDay = 4, mySeconds =
-    61230, myMeta = `${myURL}<br />${myTitle}`) =>
-    `<li><label><input type="checkbox" /><data value="${myURL}">`
-    + `${myTitle}</data></label><details><summary>${myURL}</summary>`
-    + `<label>pull interval: <select><option value="1" ${1 != myWaitInterval ?
-        'selected="true"' : ''}>Daily</option><option value="2" ${1 !=
-            myWaitInterval ? '' : 'selected="true"'}>Weekly</option></select> `
-    + `</label><label ${1 != myWaitInterval ? 'hidden="true"' : ''}>Weekday<in`
-    + `put type="range" list="days" min="1" max="7" value="${myDay}"/></label>`
-    + `<span ${1 != myWaitInterval ? 'hidden="true"' : ''}>${document.body.
-        querySelector("#days>option:nth-child(" + myDay + ")").label}</span><l`
+let get_liMarkUp = (myURL, myTitle, subscribed = false, myWaitInterval = 0,
+    myDay = 4, mySeconds = 61230, myMeta = `${myURL}<br />${myTitle}`) =>
+    `<li><label><input type="checkbox" ${subscribed ? 'checked = "true"' : ""}`
+    + `/><data value="${myURL}">${myTitle}</data></label><details><summary>`
+    + `${myURL}</summary><label>pull interval: <select><option value="1" ${1 !=
+        myWaitInterval ? 'selected="true"' : ''}>Daily</option><option value="`
+    + `2" ${1 != myWaitInterval ? '' : 'selected="true"'}>Weekly</option></sel`
+    + `ect> </label><label ${1 != myWaitInterval ? 'hidden="true"' : ''}>Weekd`
+    + `ay<input type="range" list="days" min="1" max="7" value="${myDay}"/></l`
+    + `abel><span ${1 != myWaitInterval ? 'hidden="true"' : ''}>${document.body
+        .querySelector("#days>option:nth-child(" + myDay + ")").label}</span><l`
     + `abel><input type="number" min="1395" max="86400" value="${mySeconds}" /`
     + `> seconds</label><aside contenteditable='true'>${myMeta}</aside></detai`
     + `ls></li>`
@@ -21,8 +21,9 @@ let pushFeeds = (element_id, feeds) => {
     feeds.forEach(feed_entry => {
         myFeeds.innerHTML += 2 == Object.keys(feed_entry).length ?
             get_liMarkUp(feed_entry.href, feed_entry.title) : get_liMarkUp(
-                feed_entry.href, feed_entry.title, feed_entry.frequency,
-                feed_entry.day, feed_entry.waits, feed_entry.meta)
+                feed_entry.href, feed_entry.title, "subscribed" == element_id,
+                feed_entry.frequency, feed_entry.day, feed_entry.waits,
+                feed_entry.meta)
     })
 }
 port.onMessage.addListener(msg => {
