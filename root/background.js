@@ -1,9 +1,8 @@
 let newFeeds = [], subscribed = [], discarded = [], myPort = null
-function MyOverlay() {
-    chrome.action.getBadgeText({}).then(badge => {
-        if ("" == badge) chrome.action.setBadgeText({ text: "New" })
-    })
-}
+let MyOverlay = () => chrome.action.getBadgeText({}).then(badge => {
+    if ("" == badge) chrome.action.setBadgeText({ text: "New" })
+})
+
 chrome.webNavigation.onCompleted.addListener(details => {
     if (details.url.startsWith("about:") || details.url.startsWith("chrome:")
         || details.url.includes("://chrome.google.com/webstore")) return
@@ -45,12 +44,26 @@ chrome.runtime.onConnect.addListener(port => {
         if (1 > newFeeds.length) chrome.action.setBadgeText({ text: "" })
     })
     port.onMessage.addListener(msg => {
+        let lookup = -1
         switch (msg.title) {
             case "new": MyOverlay(); discarded.unshift(newFeeds.pop()); break
             case "new feeds":
                 discarded = newFeeds.concat(discarded), newFeeds = []; break
-            case "subscription": case "discard": port.postMessage({ title: "updated" });
+            case "subscription": lookup = discarded.findIndex(feed => msg.idURL
+                == feed.href), lookup = - 1 < lookup ? (subscribed.push(
+                    discarded[lookup]), discarded.splice(lookup, 1), subscribed
+                        .length - 1) : subscribed.findIndex(feed => msg.idURL
+                            == feed.href), subscribed[lookup].frequency =
+                msg.daysFrequency, subscribed[lookup].day = msg.day, subscribed
+                [lookup].waits = msg.duration, subscribed[lookup].meta =
+                msg.customMeta, port.postMessage({ title: "updated" }); break
+            case "discard":
+                lookup = subscribed.findIndex(feed => msg.idURL == feed.href)
+                if (- 1 < lookup) discarded.push(subscribed[lookup]),
+                    subscribed.splice(lookup, 1)
+                port.postMessage({ title: "updated" });
         }
+        chrome.action.setBadgeText({ text: "" })
     })
     port.postMessage({
         title: "discarded",
@@ -59,5 +72,9 @@ chrome.runtime.onConnect.addListener(port => {
     if (0 < newFeeds.length) port.postMessage({
         title: "new feeds",
         feeds: newFeeds
+    })
+    port.postMessage({
+        title: "subscribed",
+        feeds: subscribed
     })
 })

@@ -1,27 +1,38 @@
-var port = chrome.runtime.connect({ name: "sidepanel" });
-let get_liMarkUp = (myURL, myTitle) =>
+var port = chrome.runtime.connect({ name: "sidepanel" })
+port.onDisconnect.addListener(_ => window.close())
+
+let get_liMarkUp = (myURL, myTitle, myWaitInterval = 0, myDay = 4, mySeconds =
+    61230, myMeta = `${myURL}<br />${myTitle}`) =>
     `<li><label><input type="checkbox" /><data value="${myURL}">`
     + `${myTitle}</data></label><details><summary>${myURL}</summary>`
-    + `<label>pull interval: <select><option value="1" selected="true">`
-    + `Daily</option><option value="2">Weekly</option></select> </label><`
-    + `label hidden="true">Weekday<input type="range" list="days" min="1" `
-    + `max="7"/></label><span></span><label><input type="number" min="1395`
-    + `" max="86400" value="61230" /> seconds</label><aside `
-    + `contenteditable="true">${myURL}<br />${myTitle}</aside></details></`
-    + `li>`
+    + `<label>pull interval: <select><option value="1" ${1 != myWaitInterval ?
+        'selected="true"' : ''}>Daily</option><option value="2" ${1 !=
+            myWaitInterval ? '' : 'selected="true"'}>Weekly</option></select> `
+    + `</label><label ${1 != myWaitInterval ? 'hidden="true"' : ''}>Weekday<in`
+    + `put type="range" list="days" min="1" max="7" value="${myDay}"/></label>`
+    + `<span ${1 != myWaitInterval ? 'hidden="true"' : ''}>${document.body.
+        querySelector("#days>option:nth-child(" + myDay + ")").label}</span><l`
+    + `abel><input type="number" min="1395" max="86400" value="${mySeconds}" /`
+    + `> seconds</label><aside contenteditable='true'>${myMeta}</aside></detai`
+    + `ls></li>`
 
 let pushFeeds = (element_id, feeds) => {
     let myFeeds = document.querySelector('#' + element_id)
-    feeds.forEach(feed_entry =>
-        myFeeds.innerHTML += get_liMarkUp(feed_entry.href, feed_entry.title))
+    feeds.forEach(feed_entry => {
+        myFeeds.innerHTML += 2 == Object.keys(feed_entry).length ?
+            get_liMarkUp(feed_entry.href, feed_entry.title) : get_liMarkUp(
+                feed_entry.href, feed_entry.title, feed_entry.frequency,
+                feed_entry.day, feed_entry.waits, feed_entry.meta)
+    })
 }
-port.onMessage.addListener(function (msg) {
+port.onMessage.addListener(msg => {
     switch (msg.title) {
         case "new":
             document.querySelector("#newFeeds").innerHTML += get_liMarkUp
                 (msg.feedURL, msg.feedTitle)
             port.postMessage({ title: "new" }); break
-        case "discarded": pushFeeds("discarded", msg.feeds); break
+        case "subscribed": case "discarded": pushFeeds(msg.title, msg.feeds)
+            break
         case "new feeds": pushFeeds("newFeeds", msg.feeds)
             port.postMessage({ title: "new feeds" }); break
         case "updated":
@@ -30,8 +41,8 @@ port.onMessage.addListener(function (msg) {
             if (null == subscriptionli) subscriptionli = document.querySelector
                 ("#discarded li:has(input[type=checkbox]:checked)")
             if (null != subscriptionli)
-                document.querySelector('#subscribed').appendChild(subscriptionli.
-                    parentElement.removeChild(subscriptionli))
+                document.querySelector('#subscribed').appendChild(
+                    subscriptionli.parentElement.removeChild(subscriptionli))
             else {
                 subscriptionli = document.querySelector("#subscribed li:has("
                     + "input[type=checkbox]:not(:checked)")
@@ -58,9 +69,10 @@ document.body.addEventListener('input', e => {
         case 'aside':
             feedli = e.target.parentElement.parentElement; break
         case 'select':
-            e.target.parentElement.nextSibling.hidden = 1 != e.target.
-                selectedIndex, feedli = e.target.parentElement.parentElement.
-                    parentElement
+            e.target.parentElement.nextSibling.nextSibling.hidden =
+                e.target.parentElement.nextSibling.hidden = 1 != e.target.
+                    selectedIndex, feedli = e.target.parentElement.
+                        parentElement.parentElement
     }
     if (undefined == feedli) return
     if (feedli.children[0].children[0].checked) postUpdate(feedli)
