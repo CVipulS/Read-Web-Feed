@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Read Web feed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        menu {
+            list-style-type: none
+        }
+
+        summary,
+        aside {
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <datalist id="days">
+        <option value="1" label="Sunday"></option>
+        <option value="2" label="Monday"></option>
+        <option value="3" label="Tuesday"></option>
+        <option value="4" label="Wednesday"></option>
+        <option value="5" label="Thursday"></option>
+        <option value="6" label="Friday"></option>
+        <option value="7" label="Saturday"></option>
+    </datalist>
+    <fieldset>
+        <legend>New Web feed(s)</legend>
+        <menu id="newFeeds"></menu>
+    </fieldset>
+    <fieldset>
+        <legend>Subscribed Web feed(s)</legend>
+        <menu id="subscribed"></menu>
+    </fieldset>
+    <fieldset>
+        <legend>Discarded Web feed(s)</legend>
+        <menu id="discarded"></menu>
+    </fieldset>
+    <script src="sidepanelscript.js"></script>
+</body>
+
+</html>
