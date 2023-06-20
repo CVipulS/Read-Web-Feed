@@ -18,12 +18,19 @@ let get_liMarkUp = (myURL, myTitle, subscribed = false, myWaitInterval = 0,
 
 let pushFeeds = (element_id, feeds) => {
     let myFeeds = document.querySelector('#' + element_id)
+    if ("subscribed" == element_id) myFeeds.innerHTML = ""
     feeds.forEach(feed_entry => {
-        myFeeds.innerHTML += 2 == Object.keys(feed_entry).length ?
+        let line4feed = (2 == Object.keys(feed_entry).length ?
             get_liMarkUp(feed_entry.href, feed_entry.title) : get_liMarkUp(
                 feed_entry.href, feed_entry.title, "subscribed" == element_id,
                 feed_entry.frequency, feed_entry.day, feed_entry.waits,
-                feed_entry.meta)
+                feed_entry.meta))
+        if ("subscribed" == element_id) line4feed = line4feed.slice(0, -15) +
+            "<menu>" + feed_entry.posts.map(post => '<li><a href="' + post.link
+                + '" target="_blank" ' + (Object.hasOwn(post, 'visited') ? '' :
+                    'style="font-weight: bold"') + '>' + post.title +
+                "</a></li>").join('') + "</menu>" + line4feed.slice(-15)
+        myFeeds.innerHTML += line4feed
     })
 }
 port.onMessage.addListener(msg => {
