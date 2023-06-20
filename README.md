@@ -10,7 +10,9 @@ web browser with add ons support at par with desktop web browsers
 0.0.0.0 initial release
 
 # Build and Test
-To be implemented
+There's root folder at the root of repository for use with https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#load-unpacked
+The `develop` branch has non-release requirements outside this folder.
+The design assumes the extension to be pinned as instructed at https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#pin
 
 # Contribute
 GitHub issues
