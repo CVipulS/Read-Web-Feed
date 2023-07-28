@@ -1,6 +1,17 @@
 var port = chrome.runtime.connect({ name: "sidepanel" })
 port.onDisconnect.addListener(_ => window.close())
 
+let escML = (asIs) => {
+    return asIs.replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
+}
 let get_liMarkUp = (myURL, myTitle, subscribed = false, myWaitInterval = 0,
     myDay = 4, mySeconds = 61230, myMeta = `${myURL}<br />${myTitle}`) =>
     `<li><label><input type="checkbox" ${subscribed ? 'checked = "true"' : ""}`
@@ -11,25 +22,27 @@ let get_liMarkUp = (myURL, myTitle, subscribed = false, myWaitInterval = 0,
     + `ect> </label><label ${1 != myWaitInterval ? 'hidden="true"' : ''}>Weekd`
     + `ay<input type="range" list="days" min="1" max="7" value="${myDay}"/></l`
     + `abel><span ${1 != myWaitInterval ? 'hidden="true"' : ''}>${document.body
-        .querySelector("#days>option:nth-child(" + myDay + ")").label}</span><l`
-    + `abel><input type="number" min="1395" max="86400" value="${mySeconds}" /`
-    + `> seconds</label><aside contenteditable='true'>${myMeta}</aside></detai`
-    + `ls></li>`
-
+        .querySelector("#days>option:nth-child(" + myDay + ")").label}</span><`
+    + `label><input type="number" min="1395" max="86400" value="${mySeconds}" `
+    + `/> seconds</label><aside contenteditable='true'>${escML(myMeta)}</a`
+    + `side></details></li>`
 let pushFeeds = (element_id, feeds) => {
     let myFeeds = document.querySelector('#' + element_id)
     if ("subscribed" == element_id) myFeeds.innerHTML = ""
     feeds.forEach(feed_entry => {
+        feed_entry.href = escML(feed_entry.href), feed_entry.title =
+            escML(feed_entry.title)
         let line4feed = (2 == Object.keys(feed_entry).length ?
             get_liMarkUp(feed_entry.href, feed_entry.title) : get_liMarkUp(
                 feed_entry.href, feed_entry.title, "subscribed" == element_id,
                 feed_entry.frequency, feed_entry.day, feed_entry.waits,
                 feed_entry.meta))
         if ("subscribed" == element_id) line4feed = line4feed.slice(0, -15) +
-            "<menu>" + feed_entry.posts.map(post => '<li><a href="' + post.link
-                + '" target="_blank" ' + (Object.hasOwn(post, 'visited') ? '' :
-                    'style="font-weight: bold"') + '>' + post.title +
-                "</a></li>").join('') + "</menu>" + line4feed.slice(-15)
+            "<menu>" + feed_entry.posts.map(post => '<li><a href="' +
+                escML(post.link) + '" target="_blank" ' +
+                (Object.hasOwn(post, 'visited') ? '' :
+                    'style="font-weight: bold"') + '>' + escML(post.title)
+                + "</a></li>").join('') + "</menu>" + line4feed.slice(-15)
         myFeeds.innerHTML += line4feed
     })
 }
@@ -37,7 +50,7 @@ port.onMessage.addListener(msg => {
     switch (msg.title) {
         case "new":
             document.querySelector("#newFeeds").innerHTML += get_liMarkUp
-                (msg.feedURL, msg.feedTitle)
+                (escML(msg.feedURL), escML(msg.feedTitle))
             port.postMessage({ title: "new" }); break
         case "subscribed": case "discarded": pushFeeds(msg.title, msg.feeds)
             break
